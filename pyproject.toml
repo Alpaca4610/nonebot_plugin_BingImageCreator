@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-BingImageCreator"
-version = "0.0.1"
+version = "0.0.2"
 description = "A nonebot plugin for Bing DALL-E 3"
 authors = ["Alpaca <alpaca@bupt.edu.cn>"]
 license = "MIT"

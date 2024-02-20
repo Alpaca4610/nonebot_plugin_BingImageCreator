@@ -13,6 +13,7 @@
 - 本插件调用Bing的绘图接口，仅需提供Bing的cookies即可调用DALL-E 3进行绘图。
 - 本插件支持多cookies和代理设置。
 - 在不支持NewBing的地区请设置代理。
+-  核心代码来源于[BingImageCreator](https://github.com/abersheeran/BingImageCreator)
 # 安装
 
 * 手动安装

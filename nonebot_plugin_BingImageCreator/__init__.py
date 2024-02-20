@@ -7,7 +7,7 @@ from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment,MessageEvent,Bot
 from nonebot.plugin import PluginMetadata
-from BingImageCreator import ImageGen
+from .generator import gen
 from .config import Config, ConfigError
 
 
@@ -39,13 +39,11 @@ __plugin_meta__ = PluginMetadata(
 async def _(bot: Bot,event: MessageEvent, msg: Message = CommandArg()):
     content = msg.extract_plain_text()
     random_cookies = random.choice(plugin_config.bing_cookies)
-    image_ = ImageGen(random_cookies,None,None,None)
     await paint.send(str("DALL·E 3正在画图中....."))
-    loop =  asyncio.get_event_loop()
     try:
-        res = await loop.run_in_executor(None, image_.get_images, content)
-    except Exception:
-        await paint.finish(MessageSegment.text("画图错误"),at_sender = True)
+        res = await gen(random_cookies,content)
+    except Exception as e:
+        await paint.finish(MessageSegment.text("画图错误 "+ str(e)),at_sender = True)
 
     msgs = [
                     {

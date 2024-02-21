@@ -92,10 +92,8 @@ class ImageGen:
                 timeout=200,
             )
             if not response.is_redirect:
-                logger.error(
-                    f"Need redirect response but got, {response.status_code} {response.text}"
-                )
-                raise GenerateImageException("Redirect failed")
+                err =  f"Need redirect response but got, {response.status_code} {response.text}"
+                raise GenerateImageException(err)
         # Get redirect URL
         redirect_url = response.headers["Location"].replace("&nfy=1", "")
         request_id = redirect_url.split("id=")[-1]
@@ -136,19 +134,6 @@ class ImageGen:
             raise GenerateImageException("No images")
         normal_image_links = [i for i in normal_image_links if not i.endswith(".svg")]
         return normal_image_links
-
-    async def download_image(self, link: str) -> bytes:
-        try:
-            response = await self.session.get(link)
-        except httpx.InvalidURL as url_exception:
-            raise GenerateImageException(
-                "Inappropriate contents found in the generated images. Please try again or try another prompt.",
-            ) from url_exception
-        else:
-            response.raise_for_status()
-            return response.content
-
-
 
 async def gen(cookies, prompt):
         image_gen = ImageGen(cookies)

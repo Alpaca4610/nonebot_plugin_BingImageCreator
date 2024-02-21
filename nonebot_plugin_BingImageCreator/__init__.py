@@ -5,7 +5,7 @@ import os
 
 from nonebot import on_command
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Message, MessageSegment,MessageEvent,Bot
+from nonebot.adapters.onebot.v11 import Message, MessageSegment,MessageEvent,Bot, PrivateMessageEvent
 from nonebot.plugin import PluginMetadata
 from .generator import gen
 from .config import Config, ConfigError
@@ -45,16 +45,21 @@ async def _(bot: Bot,event: MessageEvent, msg: Message = CommandArg()):
     except Exception as e:
         await paint.finish(MessageSegment.text("画图错误 "+ str(e)),at_sender = True)
 
-    msgs = [
-                    {
-                        "type": "node",
-                        "data": {
-                            "name": "DALLE 3",
-                            "uin": bot.self_id,
-                            "content": MessageSegment.image(pic),
-                        },
-                    }
-                    for pic in res               
-                ]
-    
-    await bot.call_api("send_group_forward_msg",group_id=event.group_id,messages=msgs)
+
+    if isinstance(event, PrivateMessageEvent):
+        for pic in res:
+            await paint.send(MessageSegment.image(pic))
+    else:
+        msgs = [
+                        {
+                            "type": "node",
+                            "data": {
+                                "name": "DALLE 3",
+                                "uin": bot.self_id,
+                                "content": MessageSegment.image(pic),
+                            },
+                        }
+                        for pic in res               
+                    ]
+        
+        await bot.call_api("send_group_forward_msg",group_id=event.group_id,messages=msgs)
